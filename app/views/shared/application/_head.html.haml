@@ -1,0 +1,11 @@
+%meta{content: 'text/html; charset=UTF-8', 'http-equiv': 'Content-Type'}/
+
+- if ENV['STAGE'] != 'production'
+  %meta{content: 'noindex, nofollow', name: 'robots'}/
+
+%title Buscador de filmes !
+
+= stylesheet_link_tag(:application, media: :all)
+= yield(:stylesheet)
+
+= csrf_meta_tags

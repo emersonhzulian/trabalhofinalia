@@ -1,0 +1,58 @@
+= form_for root_path, method: :get do |f|
+  .row
+    .col-6
+      .row
+        .col-4.col-lg-9
+          = text_field_tag(:search, params[:search], placeholder: 'Buscar pelo título', class: 'form-control w-100 mb-3')
+
+    .col-6
+      .row
+        .col-4
+          - options = options_for_select(genre_options, params[:genre])
+
+          = select_tag :genre, options, { include_blank: 'Filtrar por gênero', class: 'mb-3 form-control' }
+        .col-4
+          - options = options_for_select(country_options, params[:country])
+
+          = select_tag :country, options, { include_blank: 'Filtrar por país', class: 'mb-3 form-control' }
+
+        .col-4.col-lg-3
+
+          = f.submit 'Pesquisar', class: 'btn btn-primary btn-block'
+
+%table.table.table-hover.bg-faded.table-bordered.mt-4
+  %thead
+    %tr
+      %th Nome do Filme
+      %th Descrição
+  %tbody
+    - i=0
+    - films.each do |film|
+      - i=i+1
+      %tr
+        %td
+          - nome = film.nome.to_s.split('/').last.gsub('_', ' ')
+          = link_to nome, "#{film.nome}", target: :_blank
+        %td
+          = link_to film.comentario.to_s.truncate(100), "#{film.nome}", target: :_blank
+        %td
+          %button.btn.btn-primary{"data-target" => "#modal#{i}", "data-toggle" => "modal", :type => "button"} Detalhes
+          / Modal
+          .modal.fade{"aria-hidden" => "true", "id" => "modal#{i}", "aria-labelledby" => "exampleModalLabel", :role => "dialog", :tabindex => "-1"}
+            .modal-dialog{:role => "document"}
+              .modal-content
+                .modal-header
+                  %h5.modal-title #{film.nome.to_s.split('/').last.gsub('_', ' ')}
+                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+                    %span{"aria-hidden" => "true"} ×
+                .modal-body
+                  #{film.comentario.to_s}
+                  \<br><br>
+                  %h5.modal-title Elenco <br>
+                  - film.estrelando.each do |estrelando|
+                    - estrela = estrelando.to_s.split('/').last.gsub('_', ' ')
+                    = link_to estrela, "#{estrelando}", target: :_blank
+                    \<br>
+                .modal-footer
+                  %button.btn.btn-secondary{"data-dismiss" => "modal", :type => "button"} Close
+
